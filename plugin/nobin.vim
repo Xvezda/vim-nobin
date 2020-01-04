@@ -1,0 +1,80 @@
+" Copyright (C) 2020 Xvezda <https://xvezda.com/>
+"
+" MIT License
+"
+" Use of this source code is governed by an MIT-style
+" license that can be found in the LICENSE file or at
+" https://opensource.org/licenses/MIT.
+"
+" Location:     autoload/nobin.vim
+" Maintainer:   Xvezda <https://xvezda.com/>
+
+
+" Source guard
+if exists('g:loaded_nobin')
+  finish
+endif
+let g:loaded_nobin = 1
+
+function! nobin#find_source()
+  " Only if filetype is empty
+  if empty(&ft)
+    " Prevent double execution
+    if exists('b:inited_nobin')
+      return
+    endif
+    let b:inited_nobin = 1
+    " Get fullpath of opened file
+    let b:filepath = expand('%:p')
+    " Pass if file not opened or not executable
+    if empty(b:filepath) || !executable(b:filepath)
+      return
+    endif
+    " Get all filenames, which has extension
+    let b:filelist = map(glob(b:filepath . '.*', v:true, v:true),
+          \ 'fnamemodify(v:val, ":t")')
+
+    " If there is no file with extension, then finish
+    if empty(b:filelist)
+      return
+    endif
+    let b:target_file = b:filelist[0]
+
+    " Keep variables to restore
+    let orig_shortmess = &shortmess
+    set shortmess=a
+    let orig_cmdheight = &cmdheight
+    let &cmdheight = 2
+
+    echo "Seems like you accidentally opened executable rather than "
+          \ . "source code."
+    echo "Would you like to open following file instead?"
+    echo '"' . b:target_file . '" [Y/n]: '
+
+    " Restore
+    let &shortmess = orig_shortmess
+    let &cmdheight = orig_cmdheight
+
+    " Get input from user
+    let select = nr2char(getchar())
+    if select ==? 'Y'
+      execute 'silent! :e '
+            \ . glob(fnamemodify(b:filepath, ':h') . '/' . b:target_file)
+    endif
+
+    " Tiny hack to clean command line
+    echo ''
+    redraw!
+  endif
+endfunction
+
+call nobin#find_source()
+
+
+augroup nobin_init
+  autocmd!
+  autocmd BufEnter * call nobin#find_source() | execute "filetype detect"
+augroup END
+
+
+" vim:set sts=2
