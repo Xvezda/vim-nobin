@@ -13,5 +13,5 @@ I need to press tab again to make `test` to `test.c`
 But most of times, I accidently open `test` binary instead.
 It's way too frustrating. :(
 
-This plugin will find original source code of executable binary, which you opened by mistake. :)
+This plugin will automatically finds original source code of executable binary, which you opened by mistake. :)
 
