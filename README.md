@@ -3,7 +3,7 @@ I made this plugin because of auto-completion on shell environment always lead m
 
 `gcc test.c -o test`
 
-In this case, is two files in same directory. `test.c` and `test`.
+In this case, there is two files in the same directory. `test.c` and `test`.
 
 `vim t<Tab>`
 
