@@ -39,7 +39,7 @@ function! nobin#find_source()
       endif
     endif
     " Get all filenames, which has extension
-    let b:filelist = map(glob(b:filepath . '.*', v:true, v:true),
+    let b:filelist = map(glob(b:filepath . '.*', 1, 1),
           \ 'fnamemodify(v:val, ":t")')
 
     " If there is no file with extension, then finish
