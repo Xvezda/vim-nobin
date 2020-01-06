@@ -47,32 +47,38 @@ function! nobin#find_source()
       return
     endif
     let b:target_file = b:filelist[0]
+    let b:target_filepath = glob(fnamemodify(b:filepath, ':h')
+          \ . '/' . b:target_file)
 
-    " Keep variables to restore
-    let orig_shortmess = &shortmess
-    set shortmess=a
-    let orig_cmdheight = &cmdheight
-    let &cmdheight = 2
+    if !exists('g:nobin_always_yes')
+      " Keep variables to restore
+      let orig_shortmess = &shortmess
+      set shortmess=a
+      let orig_cmdheight = &cmdheight
+      let &cmdheight = 2
 
-    echo "Seems like you accidentally opened executable rather than "
-          \ . "source code."
-    echo "Would you like to open following file instead?"
-    echo '"' . b:target_file . '" [Y/n]: '
+      echo "Seems like you accidentally opened executable rather than "
+            \ . "source code."
+      echo "Would you like to open following file instead?"
+      echo '"' . b:target_file . '" [Y/n]: '
 
-    " Restore
-    let &shortmess = orig_shortmess
-    let &cmdheight = orig_cmdheight
+      " Restore
+      let &shortmess = orig_shortmess
+      let &cmdheight = orig_cmdheight
 
-    " Get input from user
-    let select = nr2char(getchar())
-    if select ==? 'Y'
-      execute 'silent! :e '
-            \ . glob(fnamemodify(b:filepath, ':h') . '/' . b:target_file)
+      " Get input from user
+      let select = nr2char(getchar())
+      if select ==? 'Y'
+        execute 'silent! :e ' . b:target_filepath
+      endif
+
+      " Tiny hack to clean command line
+      echo ''
+      redraw!
+    else
+      execute 'silent! :e ' . b:target_filepath
     endif
 
-    " Tiny hack to clean command line
-    echo ''
-    redraw!
   endif
 endfunction
 
