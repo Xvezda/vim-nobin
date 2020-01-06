@@ -26,9 +26,17 @@ function! nobin#find_source()
     let b:inited_nobin = 1
     " Get fullpath of opened file
     let b:filepath = expand('%:p')
+    " Get only filename from the path
+    let b:filename = fnamemodify(b:filepath, ':t')
     " Pass if file not opened or not executable
     if empty(b:filepath) || !executable(b:filepath)
       return
+    endif
+    " On windows, executable should contains `exe` or no extension
+    if executable('wslpath') || has('win32') || has('win32unix')
+      if matchend(b:filename, '\.exe') == -1 && match(b:filename, '\.') != -1
+        return
+      endif
     endif
     " Get all filenames, which has extension
     let b:filelist = map(glob(b:filepath . '.*', v:true, v:true),
