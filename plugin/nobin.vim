@@ -33,7 +33,7 @@ function! nobin#find_source()
       return
     endif
     " On windows, executable should contains `exe` or no extension
-    if executable('wslpath') || has('win32') || has('win32unix')
+    if has('win32') || has('win32unix') || executable('wslpath')
       if matchend(b:filename, '\.exe') == -1 && match(b:filename, '\.') != -1
         return
       endif
