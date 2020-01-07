@@ -16,6 +16,12 @@ if exists('g:loaded_nobin')
 endif
 let g:loaded_nobin = 1
 
+
+function! s:silent_edit(filepath) abort
+  execute 'silent! :e ' . a:filepath
+endfunction
+
+
 function! nobin#find_source()
   " Only if filetype is empty
   if empty(&ft)
@@ -69,14 +75,14 @@ function! nobin#find_source()
       " Get input from user
       let select = nr2char(getchar())
       if select ==? 'Y'
-        execute 'silent! :e ' . b:target_filepath
+        call s:silent_edit(b:target_filepath)
       endif
 
       " Tiny hack to clean command line
       echo ''
       redraw!
     else
-      execute 'silent! :e ' . b:target_filepath
+      call s:silent_edit(b:target_filepath)
     endif
 
   endif
