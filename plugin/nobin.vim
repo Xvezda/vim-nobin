@@ -17,6 +17,50 @@ endif
 let g:loaded_nobin = 1
 
 
+function! s:every(...)
+  let flag = 1
+  for i in range(a:0)
+    let expr = a:000[i]
+    if type(expr) == type([])
+      for subexpr in expr
+        if !s:every(subexpr)
+          let flag = 0
+          break
+        endif
+      endfor
+    elseif type(expr) == type("")
+      if !eval(expr)
+        let flag = 0
+        break
+      endif
+    endif
+  endfor
+  return flag
+endfunction
+
+
+function! s:some(...)
+  let flag = 0
+  for i in range(a:0)
+    let expr = a:000[i]
+    if type(expr) == type([])
+      for subexpr in expr
+        if s:some(subexpr)
+          let flag = 1
+          break
+        endif
+      endfor
+    elseif type(expr) == type("")
+      if eval(expr)
+        let flag = 1
+        break
+      endif
+    endif
+  endfor
+  return flag
+endfunction
+
+
 function! s:silent_edit(filepath) abort
   execute 'silent! :e ' . a:filepath
 endfunction
