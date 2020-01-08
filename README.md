@@ -15,3 +15,10 @@ It's way too frustrating. :(
 
 This plugin will automatically finds original source code of executable binary, which you opened by mistake. :)
 
+
+## Global options
+
+| Flag               | Description                                 |
+|--------------------|---------------------------------------------|
+| g:nobin_always_yes | Automatically select [y]es on select screen |
+
