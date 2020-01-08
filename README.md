@@ -20,5 +20,5 @@ This plugin will automatically finds original source code of executable binary, 
 
 | Flag               | Description                                 |
 |--------------------|---------------------------------------------|
-| g:nobin_always_yes | Automatically select [y]es on select screen |
+| `g:nobin_always_yes` | Automatically select [y]es on select screen |
 
