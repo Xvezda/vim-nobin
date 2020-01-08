@@ -15,3 +15,20 @@ It's way too frustrating. :(
 
 This plugin will automatically finds original source code of executable binary, which you opened by mistake. :)
 
+## Installation
+
+Using [vim-plug](https://github.com/junegunn/vim-plug):
+
+`Plug 'Xvezda/vim-nobin'`
+
+or
+
+`make install`
+
+
+## Global options
+
+| Flag               | Description                                 |
+|--------------------|---------------------------------------------|
+| `g:nobin_always_yes` | Automatically select [y]es on select screen |
+
