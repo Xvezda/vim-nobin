@@ -121,7 +121,12 @@ function! nobin#find_source() abort
     if empty(filelist)
       return
     endif
+
     let target_file = filelist[0]
+    if filename ==? target_file
+      return
+    endif
+
     let target_filepath = glob(fnamemodify(filepath, ':h')
           \ . '/' . target_file)
 
