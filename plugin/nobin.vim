@@ -16,48 +16,51 @@ if exists('g:loaded_nobin')
 endif
 let g:loaded_nobin = 1
 
+" Include veast library
+runtime! autoload/veast.vim
 
-function! s:every(...)
-  let flag = 1
-  for i in range(a:0)
-    let expr = a:000[i]
-    if type(expr) == type([])
-      for subexpr in expr
-        if !s:every(subexpr)
-          let flag = 0
-          break
-        endif
-      endfor
-    elseif type(expr) == type("")
-      if !eval(expr)
-        let flag = 0
-        break
-      endif
-    endif
-  endfor
-  return flag
+
+" Settings
+if !exists('g:nobin_well_known_files')
+  let g:nobin_well_known_files = ['\.exe$', '\.o$']
+else
+  if type(g:nobin_well_known_files) == type("")
+    let g:nobin_well_known_files = add([], g:nobin_well_known_files)
+  elseif type(g:nobin_well_known_files) != type([])
+    throw '`g:nobin_well_known_files` must be type of `string` or `list`'
+  endif
+endif
+let g:nobin_well_known_files = map(g:nobin_well_known_files,
+      \ '"\\m\\C" . v:val')
+
+" Helpers {{{1
+function! s:getch() abort
+  return nr2char(getchar())
 endfunction
 
 
-function! s:some(...)
-  let flag = 0
+function! s:match_bool(haystack, needle) abort
+  if match(a:haystack, a:needle) != -1
+    return 1
+  endif
+  return 0
+endfunction
+" 1}}}
+
+function! s:echo_multiline(...) abort
+  " Keep variables to restore
+  let orig_shortmess = &shortmess
+  set shortmess=a
+  let orig_cmdheight = &cmdheight
+  let &cmdheight = 2
+
   for i in range(a:0)
-    let expr = a:000[i]
-    if type(expr) == type([])
-      for subexpr in expr
-        if s:some(subexpr)
-          let flag = 1
-          break
-        endif
-      endfor
-    elseif type(expr) == type("")
-      if eval(expr)
-        let flag = 1
-        break
-      endif
-    endif
+    echo a:000[i]
   endfor
-  return flag
+
+  " Restore
+  let &shortmess = orig_shortmess
+  let &cmdheight = orig_cmdheight
 endfunction
 
 
@@ -66,7 +69,7 @@ function! s:silent_edit(filepath) abort
 endfunction
 
 
-function! nobin#find_source()
+function! nobin#find_source() abort
   " Only if filetype is empty
   if empty(&ft)
     " Prevent double execution
@@ -75,58 +78,70 @@ function! nobin#find_source()
     endif
     let b:inited_nobin = 1
     " Get fullpath of opened file
-    let b:filepath = expand('%:p')
+    let filepath = expand('%:p')
     " Get only filename from the path
-    let b:filename = fnamemodify(b:filepath, ':t')
-    " Pass if file not opened or not executable
-    if empty(b:filepath) || !executable(b:filepath)
+    let filename = fnamemodify(filepath, ':t')
+    " Pass if file not opened or not executable and not in well known list
+    if empty(filepath)
+          \ || (!executable(filepath)
+              \ && !veast#some(map(g:nobin_well_known_files,
+                                \ 's:match_bool(filename, v:val)')))
       return
     endif
+
     " On windows, executable should contains `exe` or no extension
     if has('win32') || has('win32unix') || executable('wslpath')
-      if matchend(b:filename, '\.exe') == -1 && match(b:filename, '\.') != -1
+      if matchend(filename, '\.exe') == -1 && match(filename, '\.') != -1
         return
       endif
     endif
+
+    " All possible filenames
+    let fname_comb = [filename]
+    " Cutoff extension
+    let tmp_filename = filename
+    while 1
+      let tmp_filename = strpart(tmp_filename, 0, strridx(tmp_filename, '.'))
+      call add(fname_comb, tmp_filename)
+      if !s:match_bool(tmp_filename, '\.')
+        call add(fname_comb, tmp_filename)
+        break
+      endif
+    endwhile
+
+    let filelist = []
     " Get all filenames, which has extension
-    let b:filelist = map(glob(b:filepath . '.*', 1, 1),
-          \ 'fnamemodify(v:val, ":t")')
+    for fname in fname_comb
+      call veast#concat(filelist,
+            \ map(glob(fnamemodify(filepath, ':h') . '/' . fname . '.*', 0, 1),
+            \ 'fnamemodify(v:val, ":t")'))
+    endfor
 
     " If there is no file with extension, then finish
-    if empty(b:filelist)
+    if empty(filelist)
       return
     endif
-    let b:target_file = b:filelist[0]
-    let b:target_filepath = glob(fnamemodify(b:filepath, ':h')
-          \ . '/' . b:target_file)
+    let target_file = filelist[0]
+    let target_filepath = glob(fnamemodify(filepath, ':h')
+          \ . '/' . target_file)
 
     if !exists('g:nobin_always_yes')
-      " Keep variables to restore
-      let orig_shortmess = &shortmess
-      set shortmess=a
-      let orig_cmdheight = &cmdheight
-      let &cmdheight = 2
-
-      echo "Seems like you accidentally opened executable rather than "
-            \ . "source code."
-      echo "Would you like to open following file instead?"
-      echo '"' . b:target_file . '" [Y/n]: '
-
-      " Restore
-      let &shortmess = orig_shortmess
-      let &cmdheight = orig_cmdheight
+      call s:echo_multiline("Seems like you accidentally opened "
+            \ . "executable rather than source code.",
+            \ "Would you like to open following file instead?",
+            \ '"' . target_file . '" [Y/n]: ')
 
       " Get input from user
-      let select = nr2char(getchar())
+      let select = s:getch()
       if select ==? 'Y'
-        call s:silent_edit(b:target_filepath)
+        call s:silent_edit(target_filepath)
       endif
 
       " Tiny hack to clean command line
       echo ''
       redraw!
     else
-      call s:silent_edit(b:target_filepath)
+      call s:silent_edit(target_filepath)
     endif
 
   endif
