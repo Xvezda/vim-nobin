@@ -112,7 +112,7 @@ function! nobin#find_source() abort
     let filelist = []
     " Get all filenames, which has extension
     for fname in fname_comb
-      call veast#concat(filelist,
+      call extend(filelist,
             \ map(glob(fnamemodify(filepath, ':h') . '/' . fname . '.*', 0, 1),
             \ 'fnamemodify(v:val, ":t")'))
     endfor
