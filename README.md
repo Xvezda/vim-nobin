@@ -28,7 +28,7 @@ or
 
 ## Global options
 
-| Flag               | Description                                 |
-|--------------------|---------------------------------------------|
-| `g:nobin_always_yes` | Automatically select [y]es on select screen |
-
+| Flag                     | Description                                              |
+|--------------------------|----------------------------------------------------------|
+| `g:nobin_always_yes`       | Automatically select [y]es on select screen            |
+| `g:nobin_well_known_files` | Regular expression list for well known binary patterns |
