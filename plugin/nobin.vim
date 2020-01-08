@@ -126,14 +126,12 @@ function! nobin#find_source() abort
           \ . '/' . target_file)
 
     if !exists('g:nobin_always_yes')
-      call s:echo_multiline("Seems like you accidentally opened "
-            \ . "executable rather than source code.",
-            \ "Would you like to open following file instead?",
-            \ '"' . target_file . '" [Y/n]: ')
-
       " Get input from user
-      let select = s:getch()
-      if select ==? 'Y'
+      let select = confirm("Seems like you accidentally opened "
+            \ . "executable rather than source code.\n"
+            \ . "Would you like to open following file instead?\n"
+            \ .'"' . target_file . '"', "&Yes\n&No", 2)
+      if select == 1
         call s:silent_edit(target_filepath)
       endif
 
