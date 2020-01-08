@@ -19,7 +19,7 @@ This plugin will automatically finds original source code of executable binary, 
 
 Using [vim-plug](https://github.com/junegunn/vim-plug):
 
-`plug 'Xvezda/vim-nobin'`
+`Plug 'Xvezda/vim-nobin'`
 
 or
 
