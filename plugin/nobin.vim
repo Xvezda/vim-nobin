@@ -10,8 +10,14 @@
 " Maintainer:   Xvezda <https://xvezda.com/>
 
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 " Source guard
 if exists('g:loaded_nobin')
+  let &cpo = s:save_cpo
+  unlet s:save_cpo
+
   finish
 endif
 let g:loaded_nobin = 1
@@ -157,6 +163,9 @@ augroup nobin_init
   autocmd!
   autocmd BufEnter * call nobin#find_source() | execute "filetype detect"
 augroup END
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
 
 " vim:set sts=2
