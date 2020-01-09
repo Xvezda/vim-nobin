@@ -123,7 +123,7 @@ function! nobin#find_source() abort
     endif
 
     let target_file = filelist[0]
-    if filename ==? target_file
+    if filename ==? target_file || target_file ==# '.'
       return
     endif
 
