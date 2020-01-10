@@ -1,4 +1,7 @@
 # nobin.vim
+
+![Demo](https://gist.githubusercontent.com/Xvezda/ee6613c4ae2ce743b445f2cfc6e837b2/raw/caa62e4c14aa918bcb96622189ff25444b488c0a/vim-nobin.gif)
+
 I made this plugin because of auto-completion on shell environment always lead me to open a binary, not a source code.
 
 `gcc test.c -o test`
