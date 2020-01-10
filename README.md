@@ -1,6 +1,6 @@
 # nobin.vim
 
-![Demo](https://gist.githubusercontent.com/Xvezda/ee6613c4ae2ce743b445f2cfc6e837b2/raw/caa62e4c14aa918bcb96622189ff25444b488c0a/vim-nobin.gif)
+![Demo](https://gist.githubusercontent.com/Xvezda/ee6613c4ae2ce743b445f2cfc6e837b2/raw/17ceb993c092c12207d0a0f12a62ad763723af61/vim-nobin.gif)
 
 I made this plugin because of auto-completion on shell environment always lead me to open a binary, not a source code.
 
