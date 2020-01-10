@@ -138,15 +138,24 @@ function! nobin#find_source() abort
           \ . '/' . target_file
 
     if !exists('g:nobin_always_yes')
-      " Get input from user
-      let select = confirm("Seems like you accidentally opened "
-            \ . "executable rather than source code.\n"
-            \ . "Would you like to open following file instead?\n"
-            \ .'"' . target_file . '"', "&Yes\n&No", 2)
-      if select == 1
-        call s:silent_edit(target_filepath)
-      endif
+      let msg = "Seems like you accidentally opened "
+              \ . "executable rather than source code.\n"
+              \ . "Would you like to open following file instead?\n"
+              \ .'"' . target_file . '"'
+      if has('nvim')
+        " Get input from user
+        let select = confirm(msg, "&Yes\n&No", 2)
+        if select == 1
+          call s:silent_edit(target_filepath)
+        endif
+      else
+        echo msg . " [Y/n]: "
+        let select = s:getch()
 
+        if select ==? 'Y'
+          call s:silent_edit(target_filepath)
+        endif
+      endif
       " Tiny hack to clean command line
       echo ''
       redraw!
