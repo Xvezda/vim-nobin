@@ -114,12 +114,13 @@ function! nobin#find_source() abort
         break
       endif
     endwhile
+    let fname_comb = filter(fname_comb, 'v:val !=# ""')
 
     let filelist = []
     " Get all filenames, which has extension
     for fname in fname_comb
       call extend(filelist,
-            \ map(glob(fnamemodify(filepath, ':h') . '/' . fname . '.*', 0, 1),
+            \ map(glob(fnamemodify(filepath, ':h') . '/' . fname . '.*', 1, 1),
             \ 'fnamemodify(v:val, ":t")'))
     endfor
 
@@ -133,8 +134,8 @@ function! nobin#find_source() abort
       return
     endif
 
-    let target_filepath = glob(fnamemodify(filepath, ':h')
-          \ . '/' . target_file)
+    let target_filepath = fnamemodify(filepath, ':h')
+          \ . '/' . target_file
 
     if !exists('g:nobin_always_yes')
       " Get input from user
