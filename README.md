@@ -36,3 +36,4 @@ or
 | `g:nobin_always_yes`          | Automatically select [y]es on select screen                                           |
 | `g:nobin_well_known_files`    | Regular expression list for well known binary patterns                                |
 | `g:nobin_accept_trailing_dot` | Accept trailing dot file name (Useful when you type and tab completion including dot) |
+| `g:nobin_except_files`        | Exception patterns of non-binary files                                                |

@@ -39,6 +39,19 @@ endif
 let g:nobin_well_known_files = map(g:nobin_well_known_files,
       \ '"\\m\\C" . v:val')
 
+if !exists('g:nobin_except_files')
+  let g:nobin_except_files = ['\.ba\(k\|ckup\)$']
+else
+  if type(g:nobin_except_files) == type("")
+    let g:nobin_except_files = add([], g:nobin_except_files)
+  elseif type(g:nobin_except_files) != type([])
+    throw '`g:nobin_except_files` must be type of `string` or `list`'
+  endif
+endif
+let g:nobin_except_files = map(g:nobin_except_files,
+      \ '"\\m\\C" . v:val')
+
+
 " Helpers {{{1
 function! s:getch() abort
   return nr2char(getchar())
@@ -132,7 +145,29 @@ function! nobin#find_source() abort
       return
     endif
 
-    let target_file = filelist[0]
+    " Skip filename in except patterns, even its on candidate
+    while 1
+      try
+        let target_file = remove(filelist, 0)
+      catch /^Vim\%((\a\+)\)\=:E684/  " E684 -> list index out of range
+        return
+      endtry
+      if !exists('g:nobin_except_files')
+        break
+      endif
+      let flag = 0
+      for pattern in g:nobin_except_files
+        if s:match_bool(target_file, pattern)
+          let flag = 1
+          break
+        endif
+      endfor
+      if flag
+        continue
+      endif
+      unlet flag
+      break
+    endwhile
     if filename ==? target_file || target_file ==# '.'
       return
     endif
