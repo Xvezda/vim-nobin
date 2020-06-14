@@ -1,6 +1,7 @@
 {
     "name": "vim-nobin",
     "author": "Xvezda <xvezda@naver.com>",
+    "homepage": "https://github.com/xvezda/vim-nobin#readme",
     "license": "MIT",
     "type": "utility",
     "required": "7.0",
