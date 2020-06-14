@@ -1,0 +1,9 @@
+{
+    "name": "vim-nobin",
+    "author": "Xvezda <xvezda@naver.com>",
+    "license": "MIT",
+    "type": "utility",
+    "required": "7.0",
+    "init_version": "1.0",
+    "summary": "Plugin to load original source code instead of executable binary."
+}
