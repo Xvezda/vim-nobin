@@ -100,22 +100,25 @@ function! nobin#find_source() abort
     let filepath = expand('%:p')
     " Get only filename from the path
     let filename = fnamemodify(filepath, ':t')
-    " If trailing dot not acceptable
-    if !exists('g:nobin_accept_trailing_dot')
-      " Pass if file not opened or not executable and not in well known list
-      if empty(filepath)
-            \ || (!executable(filepath)
-                \ && !veast#some(map(g:nobin_well_known_files,
-                                  \ 's:match_bool(filename, v:val)')))
+
+    " Pass if file not opened or not executable and not in well known list
+    if empty(filepath)
+          \ || (!executable(filepath)
+              \ && !veast#some(map(g:nobin_well_known_files,
+                                \ 's:match_bool(filename, v:val)')))
+      return
+    endif
+
+    " On windows, executable should contains `exe` or no extension
+    if has('win32') || has('win32unix') || executable('wslpath')
+      if matchend(filename, '\.exe') == -1 && match(filename, '\.') != -1
         return
       endif
+    endif
 
-      " On windows, executable should contains `exe` or no extension
-      if has('win32') || has('win32unix') || executable('wslpath')
-        if matchend(filename, '\.exe') == -1 && match(filename, '\.') != -1
-          return
-        endif
-      endif
+    " If trailing dot not acceptable
+    if !exists('g:nobin_accept_trailing_dot') && filereadable(filepath)
+      return
     endif
 
     " All possible filenames
