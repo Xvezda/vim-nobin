@@ -40,7 +40,7 @@ let g:nobin_well_known_files = map(g:nobin_well_known_files,
       \ '"\\m\\C" . v:val')
 
 if !exists('g:nobin_except_files')
-  let g:nobin_except_files = ['\.ba\(k\|ckup\)$']
+  let g:nobin_except_files = ['\.ba\(k\|ckup\)$', '\/\.git\/hooks\/']
 else
   if type(g:nobin_except_files) == type("")
     let g:nobin_except_files = add([], g:nobin_except_files)
@@ -152,6 +152,8 @@ function! nobin#find_source() abort
     while 1
       try
         let target_file = remove(filelist, 0)
+        let target_filepath = fnamemodify(filepath, ':h')
+              \ . '/' . target_file
       catch /^Vim\%((\a\+)\)\=:E684/  " E684 -> list index out of range
         return
       endtry
@@ -160,7 +162,7 @@ function! nobin#find_source() abort
       endif
       let flag = 0
       for pattern in g:nobin_except_files
-        if s:match_bool(target_file, pattern)
+        if s:match_bool(target_filepath . '/' . target_file, pattern)
           let flag = 1
           break
         endif
@@ -174,9 +176,6 @@ function! nobin#find_source() abort
     if filename ==? target_file || target_file ==# '.'
       return
     endif
-
-    let target_filepath = fnamemodify(filepath, ':h')
-          \ . '/' . target_file
 
     if !exists('g:nobin_always_yes')
       let msg = "Seems like you accidentally opened "
