@@ -1,7 +1,7 @@
 # nobin.vim
 [![Script manager: vishop](https://img.shields.io/badge/script%20manager-vishop-blueviolet)](https://github.com/Xvezda/vishop)
 
-![Demo](https://gist.githubusercontent.com/Xvezda/ee6613c4ae2ce743b445f2cfc6e837b2/raw/17ceb993c092c12207d0a0f12a62ad763723af61/vim-nobin.gif)
+![Demo](https://gist.githubusercontent.com/Xvezda/6f3773debe7982129d789981b4d9a72e/raw/vim-nobin.gif)
 
 I made this plugin because of auto-completion on shell environment always lead me to open a binary, not a source code.
 
