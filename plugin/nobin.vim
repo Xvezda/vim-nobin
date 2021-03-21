@@ -116,11 +116,6 @@ function! nobin#find_source() abort
       endif
     endif
 
-    " If trailing dot not acceptable
-    if !exists('g:nobin_accept_trailing_dot') && filereadable(filepath)
-      return
-    endif
-
     " All possible filenames
     let fname_comb = [filename]
     " Cutoff extension
